@@ -1,4 +1,8 @@
 using Library_Loan.DAL;
+using Library_Loan.DAL.Entities;
+using Library_Loan.Helpers;
+using Library_Loan.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +13,37 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataBaseContext>(
     o => o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Builder para llamar la clase SeederDB.cs
+builder.Services.AddTransient<Seeder>();
+
+//Builder para llamar la interfaz IUserHerper.cs
+builder.Services.AddScoped<IUserHelpers, UserHelper>();
+
+builder.Services.AddIdentity<User, IdentityRole>(io =>
+{
+    io.User.RequireUniqueEmail = true;
+    io.Password.RequireDigit = false;
+    io.Password.RequiredUniqueChars = 0;
+    io.Password.RequireLowercase = false;
+    io.Password.RequireNonAlphanumeric = false;
+    io.Password.RequireUppercase = false;
+    io.Password.RequiredLength = 6;
+}).AddEntityFrameworkStores<DataBaseContext>();
+
 var app = builder.Build();
+
+SeederData();
+
+void SeederData()
+{
+    IServiceScopeFactory? scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+
+    using (IServiceScope? scope = scopedFactory.CreateScope())
+    {
+        Seeder? service = scope.ServiceProvider.GetService<Seeder>();
+        service.SeedAsync().Wait();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -23,6 +57,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();//Autenticar usuario
+app.UseAuthorization();
 
 app.UseAuthorization();
 
