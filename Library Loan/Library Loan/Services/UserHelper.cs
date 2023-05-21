@@ -1,6 +1,7 @@
 ﻿using Library_Loan.DAL;
 using Library_Loan.DAL.Entities;
 using Library_Loan.Helpers;
+using Library_Loan.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Library_Loan.Services
@@ -64,10 +65,10 @@ namespace Library_Loan.Services
         //        .FindAsync(email);
         //}
 
-        //public async Task<SignInResult> LoginAsync(LoginViewModel loginViewModel)
-        //{
-        //    return await _signInManager.PasswordSignInAsync(loginViewModel.Username, loginViewModel.Password, loginViewModel.RememberMe, false);
-        //}
+        public async Task<SignInResult> LoginAsync(LoginViewModel loginViewModel)
+        {
+            return await _signInManager.PasswordSignInAsync(loginViewModel.Username, loginViewModel.Password, loginViewModel.RememberMe, false);
+        }
 
         public async Task LogoutAsync()
         {
