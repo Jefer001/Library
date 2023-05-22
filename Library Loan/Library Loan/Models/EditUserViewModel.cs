@@ -36,12 +36,12 @@ namespace Library_Loan.Models
 
         //TODO: Pending to put the correct paths
         [Display(Name = "Foto")]
-        public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:7120/images/noimage.png"
+        public string ImageFullPath => ImageId.Equals(Guid.Empty)
+            ? $"https://localhost:7075/images/noimage.png"
             : $"https://sales2023.blob.core.windows.net/users/{ImageId}";
 
         [Display(Name = "Imagen")]
-        public IFormFile ImageFile { get; set; }
+        public IFormFile? ImageFile { get; set; }
         #endregion
     }
 }
