@@ -4,11 +4,14 @@ using Library_Loan.Helpers;
 using Library_Loan.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services
+    .AddControllersWithViews()
+    .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddDbContext<DataBaseContext>(
     o => o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -18,6 +21,9 @@ builder.Services.AddTransient<Seeder>();
 
 //Builder para llamar la interfaz IUserHerper.cs
 builder.Services.AddScoped<IUserHelpers, UserHelper>();
+
+//Builder para llamar la interfaz IAzureStorageHelper.cs
+builder.Services.AddScoped<IAzureBlobHelper, AzureBlobHelper>();
 
 builder.Services.AddIdentity<User, IdentityRole>(io =>
 {

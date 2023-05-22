@@ -36,6 +36,30 @@ namespace Library_Loan.Services
             return await _userManager.CreateAsync(user, password);
         }
 
+        public async Task<User> AddUserAsync(AddUserViewModel addUserViewModel)
+        {
+            User user = new()
+            {
+                Address = addUserViewModel.Address,
+                Document = addUserViewModel.Document,
+                Email = addUserViewModel.Username,
+                FirstName = addUserViewModel.FirstName,
+                LastName = addUserViewModel.LastName,
+                ImageId = addUserViewModel.ImageId,
+                PhoneNumber = addUserViewModel.PhoneNumber,
+                UserName = addUserViewModel.Username,
+                UserType = addUserViewModel.UserType
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(user, addUserViewModel.Password);
+            if (result != IdentityResult.Success) return null;
+
+            User newUser = await GetUserAsync(addUserViewModel.Username);
+            await AddUserToRoleAsync(newUser, user.UserType.ToString());
+
+            return newUser;
+        }
+
         public async Task AddRoleAsync(string roleName)
         {
             bool roleExists = await _roleManager.RoleExistsAsync(roleName);
@@ -58,12 +82,6 @@ namespace Library_Loan.Services
         {
             return await _userManager.IsInRoleAsync(user, roleName);
         }
-
-        //public async Task<User> GetUserAsync(string email)
-        //{
-        //    return await _context.Users
-        //        .FindAsync(email);
-        //}
 
         public async Task<SignInResult> LoginAsync(LoginViewModel loginViewModel)
         {

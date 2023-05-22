@@ -33,7 +33,7 @@ namespace Library_Loan.DAL.Entities
         //TODO: Pending to out the corret paths
         [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:7120//images/noimage.png"
+            ? $"https://localhost:7075//images/noimage.png"
             : $"http://sales2023.blob.core.windows.net/users/{ImageId}";
 
         [Display(Name = "Tipo de usuario")]
